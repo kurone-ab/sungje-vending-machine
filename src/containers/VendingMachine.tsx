@@ -1,6 +1,6 @@
 import React from "react";
-import type { DebugSettings } from "../useDebug";
 import { VendingMachineProvider } from "../contexts/VendingMachineContext";
+import type { DebugSettings } from "../useDebug";
 import { VendingMachineView } from "./VendingMachineView";
 
 interface VendingMachineProps {

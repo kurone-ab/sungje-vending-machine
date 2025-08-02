@@ -1,6 +1,6 @@
 import React from "react";
-import { DrinkSelector } from "../components/DrinkSelector";
 import { ControlPanel } from "../components/ControlPanel";
+import { DrinkSelector } from "../components/DrinkSelector";
 import { ReturnTray } from "../components/ReturnTray";
 
 export const VendingMachineView: React.FC = () => {

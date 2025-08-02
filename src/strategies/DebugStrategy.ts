@@ -1,5 +1,5 @@
-import type { Drink, PaymentResult, PaymentStrategy } from "./PaymentStrategy";
 import type { DebugSettings } from "../useDebug";
+import type { Drink, PaymentResult, PaymentStrategy } from "./PaymentStrategy";
 
 export interface DebugStrategy {
   processInsertCash(amount: number, onMessage: (msg: string) => void): boolean;

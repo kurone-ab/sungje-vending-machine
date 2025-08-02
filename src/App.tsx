@@ -1,6 +1,6 @@
+import { VendingMachine } from "./containers/VendingMachine";
 import DebugPanel from "./DebugPanel";
 import { useDebug } from "./useDebug";
-import { VendingMachine } from "./containers/VendingMachine";
 
 function App() {
   const { isDebugMode, debugSettings, setDebugSettings } = useDebug();

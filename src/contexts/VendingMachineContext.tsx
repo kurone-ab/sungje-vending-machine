@@ -1,7 +1,7 @@
-import React, { createContext, useContext, useEffect, useState, useMemo, type ReactNode } from "react";
+import React, { createContext, type ReactNode, useContext, useEffect, useMemo, useState } from "react";
+import { DebugModeStrategy, NormalDebugStrategy } from "../strategies/DebugStrategy";
 import type { Drink } from "../strategies/PaymentStrategy";
-import { CashPaymentStrategy, CardPaymentStrategy } from "../strategies/PaymentStrategy";
-import { NormalDebugStrategy, DebugModeStrategy } from "../strategies/DebugStrategy";
+import { CardPaymentStrategy, CashPaymentStrategy } from "../strategies/PaymentStrategy";
 import type { DebugSettings } from "../useDebug";
 
 type PaymentMethod = "cash" | "card";
@@ -62,11 +62,11 @@ export const VendingMachineProvider: React.FC<VendingMachineProviderProps> = ({
   const showTemporaryMessage = (msg: string, duration = 2000) => {
     const defaultMessage =
       paymentMethod === "cash" ? "현금을 투입하거나 음료를 선택하세요." : "결제할 음료를 선택하세요.";
-    
+
     if (messageTimeoutId !== null) {
       clearTimeout(messageTimeoutId);
     }
-    
+
     setMessage(msg);
     return new Promise<boolean>((resolve) => {
       const timeoutId = window.setTimeout(() => {
