@@ -1,4 +1,4 @@
-# Assignment
+# Vending Machine
 
 ## Flowchart
 ```mermaid
