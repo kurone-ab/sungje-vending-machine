@@ -1,4 +1,4 @@
-import React, { createContext, type ReactNode, useContext, useMemo, useState } from "react";
+import React, { createContext, type ReactNode, useContext, useMemo, useRef, useState } from "react";
 import { DebugMachineOperationStrategy, DefaultMachineOperationStrategy } from "../strategies/MachineOperationStrategy";
 import type { Drink } from "../strategies/PaymentStrategy";
 import { CardPaymentStrategy, CashPaymentStrategy } from "../strategies/PaymentStrategy";
@@ -53,7 +53,7 @@ export const VendingMachineProvider: React.FC<VendingMachineProviderProps> = ({
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("cash");
   const [isProcessing, setIsProcessing] = useState(false);
   const [refundedAmount, setRefundedAmount] = useState(0);
-  const [messageTimeoutId, setMessageTimeoutId] = useState<number | null>(null);
+  const messageIdRef = useRef<number | null>(null);
 
   const cashStrategy = useMemo(() => new CashPaymentStrategy(), []);
   const cardStrategy = useMemo(() => new CardPaymentStrategy(), []);
@@ -63,22 +63,24 @@ export const VendingMachineProvider: React.FC<VendingMachineProviderProps> = ({
   const currentPaymentStrategy = paymentMethod === "cash" ? cashStrategy : cardStrategy;
   const machineOperationStrategy = isDebugMode ? debugModeStrategy : defaultMachineOperationStrategy;
 
+  const showMessage = (msg: string) => {
+    setMessage(msg);
+    if (messageIdRef.current !== null) {
+      clearTimeout(messageIdRef.current);
+    }
+  };
+
   const showTemporaryMessage = (msg: string, duration = 2000) => {
     const defaultMessage =
       paymentMethod === "cash" ? "현금을 투입하거나 음료를 선택하세요." : "결제할 음료를 선택하세요.";
 
-    if (messageTimeoutId !== null) {
-      clearTimeout(messageTimeoutId);
-    }
-
-    setMessage(msg);
+    showMessage(msg);
     return new Promise<boolean>((resolve) => {
-      const timeoutId = window.setTimeout(() => {
+      messageIdRef.current = window.setTimeout(() => {
         setMessage(defaultMessage);
-        setMessageTimeoutId(null);
+        messageIdRef.current = null;
         resolve(true);
       }, duration);
-      setMessageTimeoutId(timeoutId);
     });
   };
 
@@ -110,7 +112,7 @@ export const VendingMachineProvider: React.FC<VendingMachineProviderProps> = ({
     setIsProcessing(true);
 
     if (paymentMethod === "card") {
-      setMessage(`${drink.name} 카드 결제 중...`);
+      showMessage(`${drink.name} 카드 결제 중...`);
     }
 
     try {
@@ -137,7 +139,6 @@ export const VendingMachineProvider: React.FC<VendingMachineProviderProps> = ({
         showTemporaryMessage(paymentResult.message);
       }
     } catch (e) {
-      console.error(e);
       showTemporaryMessage("처리 중 오류가 발생했습니다.");
     } finally {
       setIsProcessing(false);
@@ -166,9 +167,9 @@ export const VendingMachineProvider: React.FC<VendingMachineProviderProps> = ({
     setPaymentMethod("cash");
     setIsProcessing(false);
     setRefundedAmount(0);
-    if (messageTimeoutId !== null) {
-      clearTimeout(messageTimeoutId);
-      setMessageTimeoutId(null);
+    if (messageIdRef.current !== null) {
+      clearTimeout(messageIdRef.current);
+      messageIdRef.current = null;
     }
   };
 
