@@ -1,4 +1,6 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import DebugPanel from "./DebugPanel";
+import { useDebug } from "./useDebug";
 
 interface Drink {
   id: number;
@@ -27,17 +29,19 @@ function App() {
   const [isProcessing, setIsProcessing] = useState(false);
 
   // 메시지를 잠시 보여주고 초기화하는 함수
-  const showTemporaryMessage = useCallback(
-    (msg: string, duration = 2000) => {
-      const defaultMessage =
-        paymentMethod === "cash" ? "현금을 투입하거나 음료를 선택하세요." : "결제할 음료를 선택하세요.";
-      setMessage(msg);
+  const showTemporaryMessage = (msg: string, duration = 2000) => {
+    const defaultMessage =
+      paymentMethod === "cash" ? "현금을 투입하거나 음료를 선택하세요." : "결제할 음료를 선택하세요.";
+    setMessage(msg);
+    return new Promise<boolean>((resolve) => {
       setTimeout(() => {
         setMessage(defaultMessage);
+        resolve(true);
       }, duration);
-    },
-    [paymentMethod],
-  );
+    });
+  };
+
+  const { isDebugMode, debugSettings, setDebugSettings } = useDebug();
 
   // 자동 잔돈 반환 로직
   useEffect(() => {
@@ -51,9 +55,22 @@ function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [purchasedItems.length]);
 
+  useEffect(() => {
+    if (purchasedItems.length > 0 && insertedMoney === 0) {
+      showTemporaryMessage("이용해주셔서 감사합니다.").then(reset);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [purchasedItems.length, insertedMoney]);
+
   // 현금 투입 핸들러
   const insertCash = (amount: number) => {
     if (paymentMethod !== "cash" || purchasedItems.length > 0) return;
+
+    if (debugSettings.forceInvalidCash) {
+      showTemporaryMessage(`[Debug] 유효하지 않은 화폐(${amount.toLocaleString()}원)가 반환됩니다.`);
+      return;
+    }
+
     setInsertedMoney((prev) => prev + amount);
     showTemporaryMessage(`${amount.toLocaleString()}원이 투입되었습니다.`);
   };
@@ -62,7 +79,7 @@ function App() {
   const selectDrink = (drink: Drink) => {
     if (isProcessing) return;
 
-    if (drink.stock <= 0) {
+    if (debugSettings.forceStockMismatch || drink.stock <= 0) {
       showTemporaryMessage("재고가 없습니다.");
       return;
     }
@@ -87,7 +104,7 @@ function App() {
     setMessage(`${drink.name} 카드 결제 중...`);
 
     setTimeout(() => {
-      const isSuccess = Math.random() > 0.2; // 80% 확률로 성공
+      const isSuccess = !debugSettings.forceCardFailure && Math.random() > 0.2; // 80% 확률로 성공
       if (isSuccess) {
         dispenseDrink(drink);
       } else {
@@ -99,36 +116,40 @@ function App() {
 
   // 음료 제공 로직
   const dispenseDrink = (drink: Drink) => {
+    // 상품 제공 실패 시뮬레이션
+    if (debugSettings.forceDispenseFailure) {
+      showTemporaryMessage("상품 제공에 실패했습니다. 결제를 취소합니다.");
+      // 카드 결제였다면, 여기서 실제로는 결제 취소 API를 호출해야 합니다.
+      // 현금 결제였다면, 돈을 반환해야 하지만, 이 시나리오에서는 이미 차감되었으므로
+      // reset을 통해 전체 반환 로직을 태우는 것이 적합해 보입니다.
+      if (paymentMethod === "cash") {
+        showTemporaryMessage(`오류 발생! ${drink.price.toLocaleString()}원을 환불합니다.`);
+        setInsertedMoney((prev) => prev + drink.price);
+      }
+      setIsProcessing(false); // 결제 실패 처리와 일관성을 위해 추가
+      return;
+    }
+
     setPurchasedItems((prev) => [...prev, { ...drink, id: Date.now() }]);
     setDrinks((prevDrinks) => prevDrinks.map((d) => (d.id === drink.id ? { ...d, stock: d.stock - 1 } : d)));
     showTemporaryMessage(`${drink.name}이(가) 나왔습니다.`);
   };
 
-  // 잔돈 반환 핸들러
-  const returnChange = () => {
-    if (insertedMoney > 0) {
-      showTemporaryMessage(`거스름돈 ${insertedMoney.toLocaleString()}원이 반환됩니다.`);
-      setInsertedMoney(0);
-    } else {
-      showTemporaryMessage("반환할 금액이 없습니다.");
-    }
-  };
-
   // 결제 모드 변경
   const togglePaymentMode = () => {
     setPaymentMethod((prev) => (prev === "cash" ? "card" : "cash"));
-    setMessage(paymentMethod === "card" ? "현금 결제로 전환되었습니다." : "카드 결제로 전환되었습니다.");
+    showTemporaryMessage(paymentMethod === "card" ? "현금 결제로 전환되었습니다." : "카드 결제로 전환되었습니다.");
   };
 
-  // 자판기 초기화 함수
-  const handleReset = () => {
+  const reset = () => {
+    if (paymentMethod === "cash" && insertedMoney > 0) {
+      showTemporaryMessage(`${insertedMoney.toLocaleString()}원이 반환됩니다.`);
+    }
     setDrinks(initialDrinks);
     setInsertedMoney(0);
     setPurchasedItems([]);
     setPaymentMethod("cash");
     setIsProcessing(false);
-    setMessage("결제 방식을 선택해주세요.");
-    showTemporaryMessage("자판기가 초기화되었습니다.");
   };
 
   return (
@@ -181,8 +202,10 @@ function App() {
 
           {/* 현금 투입 */}
           <div>
-            <p className={`text-white text-sm mb-2 transition-opacity ${paymentMethod !== "cash" && "opacity-50"}`}>
-              현금 투입:
+            <p
+              className={`text-white font-semibold mb-2 transition-opacity ${paymentMethod !== "cash" && "opacity-50"}`}
+            >
+              현금 투입
             </p>
             <div className="grid grid-cols-2 gap-2">
               {cashTypes.map((cash) => (
@@ -198,42 +221,39 @@ function App() {
             </div>
           </div>
 
-          {/* 반환 버튼 */}
+          {/* 초기화 버튼 */}
           <div>
             <button
-              onClick={returnChange}
-              disabled={paymentMethod !== "cash" || isProcessing}
+              onClick={reset}
+              disabled={(paymentMethod === "cash" && insertedMoney === 0) || isProcessing}
               className="cursor-pointer w-full bg-red-500 text-white p-3 rounded-md hover:bg-red-600 transition-colors disabled:bg-gray-500 disabled:cursor-not-allowed"
             >
-              반환
+              초기화
             </button>
           </div>
         </div>
 
         {/* 3. 반환구 */}
-        <div className="col-span-3 bg-black/30 rounded-lg p-4 min-h-[100px] flex items-center justify-between shadow-inner-lg">
-          <div className="flex items-center gap-4">
-            <div className="font-bold text-white">반환구:</div>
-            <div className="flex gap-2 flex-wrap">
-              {purchasedItems.length > 0 ? (
-                purchasedItems.map((item) => (
-                  <div key={item.id} className="text-4xl">
-                    {item.icon}
-                  </div>
-                ))
-              ) : (
-                <div className="text-gray-400">구매한 상품이 없습니다.</div>
-              )}
+        <div className="col-span-3 flex flex-col gap-2">
+          <div className="font-bold text-white">반환구</div>
+          <div className="bg-black/30 rounded-lg p-4 min-h-[100px] flex items-center justify-between shadow-inner-lg">
+            <div className="flex items-center gap-4">
+              <div className="flex gap-2 flex-wrap">
+                {purchasedItems.length > 0 ? (
+                  purchasedItems.map((item) => (
+                    <div key={item.id} className="text-4xl">
+                      {item.icon}
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-gray-400">구매한 상품이 없습니다.</div>
+                )}
+              </div>
             </div>
           </div>
-          <button
-            onClick={handleReset}
-            className="bg-orange-500 text-white px-4 py-2 rounded-md hover:bg-orange-600 transition-colors font-semibold"
-          >
-            🔄 초기화
-          </button>
         </div>
       </div>
+      {isDebugMode && <DebugPanel debugSettings={debugSettings} setDebugSettings={setDebugSettings} />}
     </div>
   );
 }
