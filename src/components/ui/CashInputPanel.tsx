@@ -1,15 +1,15 @@
-import { useVendingMachine } from "../contexts/VendingMachineContext";
+import { usePayment } from "../../contexts/PaymentContext";
+import { useVendingMachine } from "../../contexts/VendingMachineContext";
 
 const cashTypes = [100, 500, 1000, 5000, 10000];
 
 export function CashInputPanel() {
-  const { paymentMethod, isProcessing, insertCash } = useVendingMachine();
-  
+  const { paymentMethod } = usePayment();
+  const { isProcessing, insertCash } = useVendingMachine();
+
   return (
     <div>
-      <p
-        className={`text-slate-700 font-semibold mb-3 transition-opacity ${paymentMethod !== "cash" && "opacity-50"}`}
-      >
+      <p className={`text-slate-700 font-semibold mb-3 transition-opacity ${paymentMethod !== "cash" && "opacity-50"}`}>
         💰 현금 투입
       </p>
       <div className="grid grid-cols-2 gap-3">

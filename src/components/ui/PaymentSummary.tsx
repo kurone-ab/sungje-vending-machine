@@ -1,10 +1,12 @@
-import { useVendingMachine } from "../contexts/VendingMachineContext";
+import { useDrinks } from "../../contexts/DrinksContext";
+import { usePayment } from "../../contexts/PaymentContext";
 
 export function PaymentSummary() {
-  const { purchasedItems, refundedAmount } = useVendingMachine();
-  
+  const { purchasedItems } = useDrinks();
+  const { refundedAmount } = usePayment();
+
   const totalPaymentAmount = purchasedItems.reduce((total, item) => total + item.price, 0);
-  
+
   return (
     <>
       <div className="bg-gradient-to-r from-emerald-100 to-green-100 rounded-2xl p-4 border border-emerald-200 shadow-sm">

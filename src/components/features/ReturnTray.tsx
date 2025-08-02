@@ -1,7 +1,7 @@
-import { useVendingMachine } from "../contexts/VendingMachineContext";
+import { useDrinks } from "../../contexts/DrinksContext";
 
 export function ReturnTray() {
-  const { purchasedItems } = useVendingMachine();
+  const { purchasedItems } = useDrinks();
   return (
     <div className="col-span-2 flex flex-col gap-3">
       <div className="font-bold text-slate-700 text-lg flex items-center gap-2">📦 배출구</div>

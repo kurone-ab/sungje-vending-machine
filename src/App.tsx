@@ -1,5 +1,5 @@
 import DebugPanel from "./components/DebugPanel";
-import { VendingMachine } from "./components/VendingMachine";
+import { VendingMachine } from "./components/layouts/VendingMachine";
 import { useDebug } from "./hooks/useDebug";
 
 function App() {

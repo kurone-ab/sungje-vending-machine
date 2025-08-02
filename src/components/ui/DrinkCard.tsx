@@ -1,10 +1,4 @@
-interface Drink {
-  id: string;
-  name: string;
-  price: number;
-  icon: string;
-  stock: number;
-}
+import type { Drink } from "../../strategies/PaymentStrategy";
 
 interface DrinkCardProps {
   drink: Drink;

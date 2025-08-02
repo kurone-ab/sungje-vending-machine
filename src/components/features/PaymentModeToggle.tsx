@@ -1,8 +1,10 @@
-import { useVendingMachine } from "../contexts/VendingMachineContext";
+import { usePayment } from "../../contexts/PaymentContext";
+import { useVendingMachine } from "../../contexts/VendingMachineContext";
 
 export function PaymentModeToggle() {
-  const { paymentMethod, insertedMoney, togglePaymentMode } = useVendingMachine();
-  
+  const { paymentMethod, insertedMoney } = usePayment();
+  const { togglePaymentMode } = useVendingMachine();
+
   return (
     <button
       onClick={togglePaymentMode}

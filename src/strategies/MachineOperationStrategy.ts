@@ -1,4 +1,4 @@
-import type { DebugSettings } from "src/hooks/useDebug";
+import type { DebugSettings } from "../hooks/useDebug";
 import type { Drink, PaymentResult, PaymentStrategy } from "./PaymentStrategy";
 
 export interface MachineOperationStrategy {

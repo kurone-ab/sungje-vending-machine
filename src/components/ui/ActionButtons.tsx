@@ -1,8 +1,10 @@
-import { useVendingMachine } from "../contexts/VendingMachineContext";
+import { usePayment } from "../../contexts/PaymentContext";
+import { useVendingMachine } from "../../contexts/VendingMachineContext";
 
 export function ActionButtons() {
-  const { paymentMethod, insertedMoney, isProcessing, refundAllCash, resetToInitialState } = useVendingMachine();
-  
+  const { paymentMethod, insertedMoney } = usePayment();
+  const { isProcessing, refundAllCash, resetToInitialState } = useVendingMachine();
+
   return (
     <div className="flex flex-col gap-3">
       <button
