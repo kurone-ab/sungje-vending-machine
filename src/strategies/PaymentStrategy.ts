@@ -1,8 +1,6 @@
 import type { Drink } from "../types/drink";
 import type { PaymentResult, PaymentStrategy } from "../types/payment";
 
-export type { Drink, PaymentResult, PaymentStrategy };
-
 export class CashPaymentStrategy implements PaymentStrategy {
   canPurchase(drink: Drink, insertedMoney: number): boolean {
     return drink.stock > 0 && insertedMoney >= drink.price;

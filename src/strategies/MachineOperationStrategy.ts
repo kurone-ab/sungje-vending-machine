@@ -3,8 +3,6 @@ import type { Drink } from "../types/drink";
 import type { MachineOperationStrategy } from "../types/machine";
 import type { PaymentResult, PaymentStrategy } from "../types/payment";
 
-export type { MachineOperationStrategy };
-
 export class DefaultMachineOperationStrategy implements MachineOperationStrategy {
   processInsertCash(amount: number, onMessage: (msg: string) => void): boolean {
     onMessage(`${amount.toLocaleString()}원이 투입되었습니다.`);
