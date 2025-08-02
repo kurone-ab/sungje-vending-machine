@@ -1,9 +1,8 @@
-import React from "react";
 import { useVendingMachine } from "../contexts/VendingMachineContext";
 
 const cashTypes = [100, 500, 1000, 5000, 10000];
 
-export const ControlPanel: React.FC = () => {
+export function ControlPanel() {
   const {
     paymentMethod,
     insertedMoney,
@@ -84,4 +83,4 @@ export const ControlPanel: React.FC = () => {
       </div>
     </div>
   );
-};
+}

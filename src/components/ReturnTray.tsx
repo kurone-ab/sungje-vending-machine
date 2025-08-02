@@ -1,7 +1,6 @@
-import React from "react";
 import { useVendingMachine } from "../contexts/VendingMachineContext";
 
-export const ReturnTray: React.FC = () => {
+export function ReturnTray() {
   const { purchasedItems } = useVendingMachine();
   return (
     <div className="col-span-2 flex flex-col gap-3">
@@ -26,4 +25,4 @@ export const ReturnTray: React.FC = () => {
       </div>
     </div>
   );
-};
+}

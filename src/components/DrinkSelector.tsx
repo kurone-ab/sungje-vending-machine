@@ -1,7 +1,6 @@
-import React from "react";
 import { useVendingMachine } from "../contexts/VendingMachineContext";
 
-export const DrinkSelector: React.FC = () => {
+export function DrinkSelector() {
   const { drinks, paymentMethod, insertedMoney, isProcessing, selectDrink } = useVendingMachine();
   return (
     <div className="col-span-2 bg-gradient-to-br from-slate-100 to-slate-200 rounded-2xl p-8 grid grid-cols-3 grid-rows-2 gap-6 border border-slate-300/50">
@@ -30,4 +29,4 @@ export const DrinkSelector: React.FC = () => {
       })}
     </div>
   );
-};
+}

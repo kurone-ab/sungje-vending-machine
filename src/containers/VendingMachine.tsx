@@ -1,4 +1,3 @@
-import React from "react";
 import { VendingMachineProvider } from "../contexts/VendingMachineContext";
 import type { DebugSettings } from "../useDebug";
 import { VendingMachineView } from "./VendingMachineView";
@@ -8,10 +7,10 @@ interface VendingMachineProps {
   debugSettings: DebugSettings;
 }
 
-export const VendingMachine: React.FC<VendingMachineProps> = ({ isDebugMode, debugSettings }) => {
+export function VendingMachine({ isDebugMode, debugSettings }: VendingMachineProps) {
   return (
     <VendingMachineProvider isDebugMode={isDebugMode} debugSettings={debugSettings}>
       <VendingMachineView />
     </VendingMachineProvider>
   );
-};
+}

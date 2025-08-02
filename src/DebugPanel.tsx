@@ -1,13 +1,13 @@
-import React from "react";
+import type { ChangeEvent, Dispatch, SetStateAction } from "react";
 import type { DebugSettings } from "./useDebug";
 
 interface DebugPanelProps {
   debugSettings: DebugSettings;
-  setDebugSettings: React.Dispatch<React.SetStateAction<DebugSettings>>;
+  setDebugSettings: Dispatch<SetStateAction<DebugSettings>>;
 }
 
-const DebugPanel: React.FC<DebugPanelProps> = ({ debugSettings, setDebugSettings }) => {
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+function DebugPanel({ debugSettings, setDebugSettings }: DebugPanelProps) {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, checked } = e.target;
     setDebugSettings((prev) => ({ ...prev, [name]: checked }));
   };
@@ -63,6 +63,6 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ debugSettings, setDebugSettings
       </div>
     </div>
   );
-};
+}
 
 export default DebugPanel;

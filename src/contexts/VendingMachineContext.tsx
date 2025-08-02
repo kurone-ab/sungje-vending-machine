@@ -1,4 +1,4 @@
-import React, { createContext, type ReactNode, useContext, useMemo, useRef, useState } from "react";
+import { createContext, type ReactNode, useContext, useMemo, useRef, useState } from "react";
 import { DebugMachineOperationStrategy, DefaultMachineOperationStrategy } from "../strategies/MachineOperationStrategy";
 import type { Drink } from "../strategies/PaymentStrategy";
 import { CardPaymentStrategy, CashPaymentStrategy } from "../strategies/PaymentStrategy";
@@ -41,11 +41,8 @@ interface VendingMachineProviderProps {
   debugSettings: DebugSettings;
 }
 
-export const VendingMachineProvider: React.FC<VendingMachineProviderProps> = ({
-  children,
-  isDebugMode,
-  debugSettings,
-}) => {
+export function VendingMachineProvider(props: VendingMachineProviderProps) {
+  const { children, isDebugMode, debugSettings } = props;
   const [drinks, setDrinks] = useState(initialDrinks);
   const [insertedMoney, setInsertedMoney] = useState(0);
   const [purchasedItems, setPurchasedItems] = useState<Drink[]>([]);
@@ -200,7 +197,7 @@ export const VendingMachineProvider: React.FC<VendingMachineProviderProps> = ({
   };
 
   return <VendingMachineContext.Provider value={value}>{children}</VendingMachineContext.Provider>;
-};
+}
 
 export const useVendingMachine = () => {
   const context = useContext(VendingMachineContext);
