@@ -129,10 +129,12 @@ export const VendingMachineProvider: React.FC<VendingMachineProviderProps> = ({
           dispenseDrink(drink);
           showTemporaryMessage(paymentResult.message);
         } else {
-          showTemporaryMessage("상품 제공에 실패했습니다. 결제를 취소합니다.");
           if (paymentMethod === "cash") {
-            showTemporaryMessage(`오류 발생! ${drink.price.toLocaleString()}원을 환불합니다.`);
+            showTemporaryMessage(`상품 제공에 실패했습니다. ${drink.price.toLocaleString()}원을 환불합니다.`);
+            setInsertedMoney((prev) => prev - drink.price);
             setRefundedAmount((prev) => prev + drink.price);
+          } else {
+            showTemporaryMessage("상품 제공에 실패했습니다. 결제를 취소합니다.");
           }
         }
       } else {
