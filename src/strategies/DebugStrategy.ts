@@ -1,13 +1,9 @@
-import type { Drink, PaymentResult, PaymentStrategy } from './PaymentStrategy';
-import type { DebugSettings } from '../useDebug';
+import type { Drink, PaymentResult, PaymentStrategy } from "./PaymentStrategy";
+import type { DebugSettings } from "../useDebug";
 
 export interface DebugStrategy {
   processInsertCash(amount: number, onMessage: (msg: string) => void): boolean;
-  processPayment(
-    strategy: PaymentStrategy, 
-    drink: Drink, 
-    insertedMoney: number
-  ): Promise<PaymentResult>;
+  processPayment(strategy: PaymentStrategy, drink: Drink, insertedMoney: number): Promise<PaymentResult>;
   processDispense(): boolean;
 }
 
@@ -17,11 +13,7 @@ export class NormalDebugStrategy implements DebugStrategy {
     return true;
   }
 
-  async processPayment(
-    strategy: PaymentStrategy, 
-    drink: Drink, 
-    insertedMoney: number
-  ): Promise<PaymentResult> {
+  async processPayment(strategy: PaymentStrategy, drink: Drink, insertedMoney: number): Promise<PaymentResult> {
     return strategy.processPayment(drink, insertedMoney);
   }
 
@@ -32,7 +24,7 @@ export class NormalDebugStrategy implements DebugStrategy {
 
 export class DebugModeStrategy implements DebugStrategy {
   private debugSettings: DebugSettings;
-  
+
   constructor(debugSettings: DebugSettings) {
     this.debugSettings = debugSettings;
   }
@@ -42,29 +34,25 @@ export class DebugModeStrategy implements DebugStrategy {
       onMessage(`[Debug] 유효하지 않은 화폐(${amount.toLocaleString()}원)가 반환됩니다.`);
       return false;
     }
-    
+
     onMessage(`${amount.toLocaleString()}원이 투입되었습니다.`);
     return true;
   }
 
-  async processPayment(
-    strategy: PaymentStrategy, 
-    drink: Drink, 
-    insertedMoney: number
-  ): Promise<PaymentResult> {
+  async processPayment(strategy: PaymentStrategy, drink: Drink, insertedMoney: number): Promise<PaymentResult> {
     if (this.debugSettings.forceStockMismatch) {
       return {
         success: false,
-        message: "재고가 없습니다."
+        message: "재고가 없습니다.",
       };
     }
 
     const result = await strategy.processPayment(drink, insertedMoney);
-    
-    if (result.success && strategy.getDisplayName().includes('카드') && this.debugSettings.forceCardFailure) {
+
+    if (result.success && strategy.getDisplayName().includes("카드") && this.debugSettings.forceCardFailure) {
       return {
         success: false,
-        message: "카드 결제에 실패했습니다."
+        message: "카드 결제에 실패했습니다.",
       };
     }
 
@@ -73,6 +61,5 @@ export class DebugModeStrategy implements DebugStrategy {
 
   processDispense(): boolean {
     return !this.debugSettings.forceDispenseFailure;
-
   }
 }

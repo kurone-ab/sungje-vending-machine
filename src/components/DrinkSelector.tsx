@@ -1,21 +1,8 @@
-import React from 'react';
-import type { Drink } from '../strategies/PaymentStrategy';
+import React from "react";
+import { useVendingMachine } from "../contexts/VendingMachineContext";
 
-interface DrinkSelectorProps {
-  drinks: Drink[];
-  paymentMethod: 'cash' | 'card';
-  insertedMoney: number;
-  isProcessing: boolean;
-  onSelectDrink: (drink: Drink) => void;
-}
-
-export const DrinkSelector: React.FC<DrinkSelectorProps> = ({
-  drinks,
-  paymentMethod,
-  insertedMoney,
-  isProcessing,
-  onSelectDrink
-}) => {
+export const DrinkSelector: React.FC = () => {
+  const { drinks, paymentMethod, insertedMoney, isProcessing, selectDrink } = useVendingMachine();
   return (
     <div className="col-span-2 bg-black/30 rounded-lg p-6 grid grid-cols-3 grid-rows-2 gap-6">
       {drinks.map((drink) => {
@@ -26,7 +13,7 @@ export const DrinkSelector: React.FC<DrinkSelectorProps> = ({
         return (
           <button
             key={drink.id}
-            onClick={() => onSelectDrink(drink)}
+            onClick={() => selectDrink(drink)}
             disabled={!isAvailable || isProcessing}
             className={`bg-white/90 p-4 rounded-lg shadow-lg flex flex-col items-center justify-between transition-all duration-200 ${isAvailable && !isProcessing ? "cursor-pointer hover:scale-105 hover:shadow-xl" : "opacity-50 cursor-not-allowed"}`}
           >

@@ -1,28 +1,11 @@
-import React from 'react';
-
-interface ControlPanelProps {
-  paymentMethod: 'cash' | 'card';
-  insertedMoney: number;
-  message: string;
-  isProcessing: boolean;
-  purchasedItemsCount: number;
-  onTogglePaymentMode: () => void;
-  onInsertCash: (amount: number) => void;
-  onReset: () => void;
-}
+import React from "react";
+import { useVendingMachine } from "../contexts/VendingMachineContext";
 
 const cashTypes = [100, 500, 1000, 5000, 10000];
 
-export const ControlPanel: React.FC<ControlPanelProps> = ({
-  paymentMethod,
-  insertedMoney,
-  message,
-  isProcessing,
-  purchasedItemsCount,
-  onTogglePaymentMode,
-  onInsertCash,
-  onReset
-}) => {
+export const ControlPanel: React.FC = () => {
+  const { paymentMethod, insertedMoney, message, isProcessing, purchasedItems, togglePaymentMode, insertCash, reset } =
+    useVendingMachine();
   return (
     <div className="flex flex-col gap-6">
       <div className="bg-black text-white p-4 rounded-md text-right shadow-inner-lg">
@@ -32,7 +15,7 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
       </div>
 
       <button
-        onClick={onTogglePaymentMode}
+        onClick={togglePaymentMode}
         disabled={insertedMoney > 0}
         className="cursor-pointer w-full bg-purple-500 text-white p-2 rounded-md hover:bg-purple-600 transition-colors disabled:bg-gray-500 disabled:cursor-not-allowed"
       >
@@ -40,17 +23,15 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
       </button>
 
       <div>
-        <p
-          className={`text-white font-semibold mb-2 transition-opacity ${paymentMethod !== "cash" && "opacity-50"}`}
-        >
+        <p className={`text-white font-semibold mb-2 transition-opacity ${paymentMethod !== "cash" && "opacity-50"}`}>
           현금 투입
         </p>
         <div className="grid grid-cols-2 gap-2">
           {cashTypes.map((cash) => (
             <button
               key={cash}
-              onClick={() => onInsertCash(cash)}
-              disabled={paymentMethod !== "cash" || isProcessing || purchasedItemsCount > 0}
+              onClick={() => insertCash(cash)}
+              disabled={paymentMethod !== "cash" || isProcessing || purchasedItems.length > 0}
               className="cursor-pointer bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600 transition-colors disabled:bg-gray-500 disabled:cursor-not-allowed"
             >
               {cash.toLocaleString()}원
@@ -61,7 +42,7 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
 
       <div>
         <button
-          onClick={onReset}
+          onClick={reset}
           disabled={(paymentMethod === "cash" && insertedMoney === 0) || isProcessing}
           className="cursor-pointer w-full bg-red-500 text-white p-3 rounded-md hover:bg-red-600 transition-colors disabled:bg-gray-500 disabled:cursor-not-allowed"
         >

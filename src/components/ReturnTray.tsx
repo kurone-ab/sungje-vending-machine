@@ -1,11 +1,8 @@
-import React from 'react';
-import type { Drink } from '../strategies/PaymentStrategy';
+import React from "react";
+import { useVendingMachine } from "../contexts/VendingMachineContext";
 
-interface ReturnTrayProps {
-  purchasedItems: Drink[];
-}
-
-export const ReturnTray: React.FC<ReturnTrayProps> = ({ purchasedItems }) => {
+export const ReturnTray: React.FC = () => {
+  const { purchasedItems } = useVendingMachine();
   return (
     <div className="col-span-3 flex flex-col gap-2">
       <div className="font-bold text-white">반환구</div>
