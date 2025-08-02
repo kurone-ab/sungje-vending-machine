@@ -1,9 +1,9 @@
 import type { ReactNode } from "react";
-import type { DebugSettings } from "../hooks/useDebug";
 import { MessageProvider } from "./MessageContext";
 import { PaymentProvider } from "./PaymentContext";
 import { DrinksProvider } from "./DrinksContext";
 import { VendingMachineStateProvider } from "./VendingMachineStateContext";
+import type { DebugSettings } from "../types";
 
 interface VendingMachineProviderProps {
   children: ReactNode;

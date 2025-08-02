@@ -1,12 +1,18 @@
-import { createContext, type ReactNode, useContext, useMemo, useState } from "react";
-import type { DebugSettings } from "../hooks/useDebug";
+import { createContext, useContext, useMemo, useState } from "react";
+import type { ReactNode } from "react";
 import { DebugMachineOperationStrategy, DefaultMachineOperationStrategy } from "../strategies/MachineOperationStrategy";
-import type { Drink } from "../strategies/PaymentStrategy";
 import { CardPaymentStrategy, CashPaymentStrategy } from "../strategies/PaymentStrategy";
 import { VendingMachineService } from "../services/VendingMachineService";
 import { useMessage } from "./MessageContext";
 import { usePayment } from "./PaymentContext";
 import { useDrinks } from "./DrinksContext";
+import type { Drink, DebugSettings } from "../types";
+
+interface VendingMachineStateProviderProps {
+  children: ReactNode;
+  isDebugMode: boolean;
+  debugSettings: DebugSettings;
+}
 
 interface VendingMachineState {
   isProcessing: boolean;
@@ -23,12 +29,6 @@ interface VendingMachineActions {
 interface VendingMachineContextType extends VendingMachineState, VendingMachineActions {}
 
 const VendingMachineStateContext = createContext<VendingMachineContextType | undefined>(undefined);
-
-interface VendingMachineStateProviderProps {
-  children: ReactNode;
-  isDebugMode: boolean;
-  debugSettings: DebugSettings;
-}
 
 export function VendingMachineStateProvider(props: VendingMachineStateProviderProps) {
   const { children, isDebugMode, debugSettings } = props;

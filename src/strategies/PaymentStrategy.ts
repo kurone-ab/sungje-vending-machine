@@ -1,22 +1,6 @@
-export interface Drink {
-  id: number;
-  name: string;
-  price: number;
-  stock: number;
-  icon: string;
-}
+import type { Drink, PaymentResult, PaymentStrategy } from '../types';
 
-export interface PaymentResult {
-  success: boolean;
-  message: string;
-  changeAmount?: number;
-}
-
-export interface PaymentStrategy {
-  canPurchase(drink: Drink, insertedMoney?: number): boolean;
-  processPayment(drink: Drink, insertedMoney: number): Promise<PaymentResult>;
-  getDisplayName(): string;
-}
+export type { Drink, PaymentResult, PaymentStrategy };
 
 export class CashPaymentStrategy implements PaymentStrategy {
   canPurchase(drink: Drink, insertedMoney: number): boolean {

@@ -1,6 +1,10 @@
-import { createContext, type ReactNode, useContext, useState } from "react";
+import { createContext, useContext, useState } from "react";
+import type { ReactNode } from "react";
+import type { PaymentMethod } from "../types";
 
-type PaymentMethod = "cash" | "card";
+interface PaymentProviderProps {
+  children: ReactNode;
+}
 
 interface PaymentState {
   paymentMethod: PaymentMethod;
@@ -19,10 +23,6 @@ interface PaymentActions {
 interface PaymentContextType extends PaymentState, PaymentActions {}
 
 const PaymentContext = createContext<PaymentContextType | undefined>(undefined);
-
-interface PaymentProviderProps {
-  children: ReactNode;
-}
 
 export function PaymentProvider({ children }: PaymentProviderProps) {
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("cash");

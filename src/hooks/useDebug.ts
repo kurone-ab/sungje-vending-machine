@@ -1,11 +1,7 @@
 import { useEffect, useState } from "react";
+import type { DebugSettings } from "../types";
 
-export interface DebugSettings {
-  forceCardFailure: boolean;
-  forceDispenseFailure: boolean;
-  forceInvalidCash: boolean;
-  forceStockMismatch: boolean;
-}
+export type { DebugSettings };
 
 export const useDebug = () => {
   const [isDebugMode, setIsDebugMode] = useState(false);

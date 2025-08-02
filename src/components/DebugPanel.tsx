@@ -1,11 +1,16 @@
 import type { ChangeEvent, Dispatch, SetStateAction } from "react";
-import type { DebugSettings } from "../hooks/useDebug";
+import type { DebugSettings } from "../types";
 
 interface SwitchProps {
   name: string;
   checked: boolean;
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
   label: string;
+}
+
+interface DebugPanelProps {
+  debugSettings: DebugSettings;
+  setDebugSettings: Dispatch<SetStateAction<DebugSettings>>;
 }
 
 function Switch({ name, checked, onChange, label }: SwitchProps) {
@@ -18,10 +23,6 @@ function Switch({ name, checked, onChange, label }: SwitchProps) {
   );
 }
 
-interface DebugPanelProps {
-  debugSettings: DebugSettings;
-  setDebugSettings: Dispatch<SetStateAction<DebugSettings>>;
-}
 
 function DebugPanel({ debugSettings, setDebugSettings }: DebugPanelProps) {
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {

@@ -1,4 +1,4 @@
-import type { Drink } from "../../strategies/PaymentStrategy";
+import type { Drink } from "../../types";
 
 interface DrinkCardProps {
   drink: Drink;

@@ -1,4 +1,10 @@
-import { createContext, type ReactNode, useContext, useRef, useState } from "react";
+import { createContext, useContext, useRef, useState } from "react";
+import type { ReactNode } from "react";
+import type { PaymentMethod } from "../types";
+
+interface MessageProviderProps {
+  children: ReactNode;
+}
 
 interface MessageState {
   message: string;
@@ -7,16 +13,12 @@ interface MessageState {
 interface MessageActions {
   showMessage: (msg: string) => void;
   showTemporaryMessage: (msg: string, duration?: number) => Promise<boolean>;
-  setDefaultMessage: (paymentMethod: "cash" | "card") => void;
+  setDefaultMessage: (paymentMethod: PaymentMethod) => void;
 }
 
 interface MessageContextType extends MessageState, MessageActions {}
 
 const MessageContext = createContext<MessageContextType | undefined>(undefined);
-
-interface MessageProviderProps {
-  children: ReactNode;
-}
 
 export function MessageProvider({ children }: MessageProviderProps) {
   const [message, setMessage] = useState("결제 방식을 선택해주세요.");
@@ -29,7 +31,7 @@ export function MessageProvider({ children }: MessageProviderProps) {
     }
   };
 
-  const setDefaultMessage = (paymentMethod: "cash" | "card") => {
+  const setDefaultMessage = (paymentMethod: PaymentMethod) => {
     const defaultMessage =
       paymentMethod === "cash" ? "현금을 투입하거나 음료를 선택하세요." : "결제할 음료를 선택하세요.";
     setMessage(defaultMessage);

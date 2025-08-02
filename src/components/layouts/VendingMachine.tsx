@@ -1,8 +1,8 @@
-import type { DebugSettings } from "../../hooks/useDebug";
 import { VendingMachineProvider } from "../../contexts/VendingMachineContext";
 import { ControlPanel } from "./ControlPanel";
 import { DrinkSelector } from "../features/DrinkSelector";
 import { ReturnTray } from "../features/ReturnTray";
+import type { DebugSettings } from "../../types";
 
 interface VendingMachineProps {
   isDebugMode: boolean;

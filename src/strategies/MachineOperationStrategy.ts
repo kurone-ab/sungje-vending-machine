@@ -1,11 +1,6 @@
-import type { DebugSettings } from "../hooks/useDebug";
-import type { Drink, PaymentResult, PaymentStrategy } from "./PaymentStrategy";
+import type { DebugSettings, Drink, PaymentResult, PaymentStrategy, MachineOperationStrategy } from "../types";
 
-export interface MachineOperationStrategy {
-  processInsertCash(amount: number, onMessage: (msg: string) => void): boolean;
-  processPayment(strategy: PaymentStrategy, drink: Drink, insertedMoney: number): Promise<PaymentResult>;
-  processDispense(): boolean;
-}
+export type { MachineOperationStrategy };
 
 export class DefaultMachineOperationStrategy implements MachineOperationStrategy {
   processInsertCash(amount: number, onMessage: (msg: string) => void): boolean {

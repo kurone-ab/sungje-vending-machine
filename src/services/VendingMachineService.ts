@@ -1,11 +1,9 @@
-import type { Drink } from "../strategies/PaymentStrategy";
-import type { MachineOperationStrategy } from "../strategies/MachineOperationStrategy";
-import type { PaymentStrategy } from "../strategies/PaymentStrategy";
+import type { Drink, MachineOperationStrategy, PaymentStrategy, PaymentMethod } from "../types";
 
 interface VendingMachineServiceCallbacks {
   onShowMessage: (msg: string) => void;
   onShowTemporaryMessage: (msg: string, duration?: number) => Promise<boolean>;
-  onSetDefaultMessage: (paymentMethod: "cash" | "card") => void;
+  onSetDefaultMessage: (paymentMethod: PaymentMethod) => void;
   onUpdateInsertedMoney: (amount: number) => void;
   onAddRefundedAmount: (amount: number) => void;
   onDispenseDrink: (drink: Drink) => void;
@@ -33,7 +31,7 @@ export class VendingMachineService {
     }
   }
 
-  insertCash(amount: number, paymentMethod: "cash" | "card", machineOperationStrategy: MachineOperationStrategy): void {
+  insertCash(amount: number, paymentMethod: PaymentMethod, machineOperationStrategy: MachineOperationStrategy): void {
     if (paymentMethod !== "cash") return;
 
     const success = machineOperationStrategy.processInsertCash(amount, this.callbacks.onShowTemporaryMessage);
@@ -47,7 +45,7 @@ export class VendingMachineService {
   async selectDrink(
     drink: Drink,
     insertedMoney: number,
-    paymentMethod: "cash" | "card",
+    paymentMethod: PaymentMethod,
     drinks: Drink[],
     currentPaymentStrategy: PaymentStrategy,
     machineOperationStrategy: MachineOperationStrategy,
@@ -89,7 +87,7 @@ export class VendingMachineService {
     }
   }
 
-  refundAllCash(insertedMoney: number, paymentMethod: "cash" | "card"): void {
+  refundAllCash(insertedMoney: number, paymentMethod: PaymentMethod): void {
     if (paymentMethod === "cash" && insertedMoney > 0) {
       this.callbacks.onShowTemporaryMessage(`${insertedMoney.toLocaleString()}원이 반환됩니다.`);
       this.callbacks.onAddRefundedAmount(insertedMoney);
@@ -97,7 +95,7 @@ export class VendingMachineService {
     }
   }
 
-  togglePaymentMode(currentPaymentMethod: "cash" | "card"): { newPaymentMethod: "cash" | "card"; message: string } {
+  togglePaymentMode(currentPaymentMethod: PaymentMethod): { newPaymentMethod: PaymentMethod; message: string } {
     const newPaymentMethod = currentPaymentMethod === "cash" ? "card" : "cash";
     const message = currentPaymentMethod === "card" ? "현금 결제로 전환되었습니다." : "카드 결제로 전환되었습니다.";
 
