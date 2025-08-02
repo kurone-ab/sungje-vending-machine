@@ -18,7 +18,6 @@ const initialDrinks: Drink[] = [
 
 const cashTypes = [100, 500, 1000, 5000, 10000];
 
-
 function App() {
   const [drinks, setDrinks] = useState(initialDrinks);
   const [insertedMoney, setInsertedMoney] = useState(0);
@@ -42,26 +41,25 @@ function App() {
 
   // 자동 잔돈 반환 로직
   useEffect(() => {
-    // 조건: 잔액이 있고, 구매한 상품이 있으며, 더 이상 구매 가능한 상품이 없을 때
     if (insertedMoney > 0 && purchasedItems.length > 0) {
       const canBuyMore = drinks.some((drink) => drink.stock > 0 && insertedMoney >= drink.price);
       if (!canBuyMore) {
-        // 딜레이를 주어 사용자가 상황을 인지할 시간을 줌
         showTemporaryMessage(`구매 가능한 상품이 없어 ${insertedMoney.toLocaleString()}원을 반환합니다.`, 4000);
         setInsertedMoney(0);
       }
     }
-  }, [purchasedItems, drinks, showTemporaryMessage]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [purchasedItems.length]);
 
   // 현금 투입 핸들러
-  const handleInsertCash = (amount: number) => {
+  const insertCash = (amount: number) => {
     if (paymentMethod !== "cash" || purchasedItems.length > 0) return;
     setInsertedMoney((prev) => prev + amount);
     showTemporaryMessage(`${amount.toLocaleString()}원이 투입되었습니다.`);
   };
 
   // 음료 선택 핸들러
-  const handleSelectDrink = (drink: Drink) => {
+  const selectDrink = (drink: Drink) => {
     if (isProcessing) return;
 
     if (drink.stock <= 0) {
@@ -107,7 +105,7 @@ function App() {
   };
 
   // 잔돈 반환 핸들러
-  const handleReturnChange = () => {
+  const returnChange = () => {
     if (insertedMoney > 0) {
       showTemporaryMessage(`거스름돈 ${insertedMoney.toLocaleString()}원이 반환됩니다.`);
       setInsertedMoney(0);
@@ -139,17 +137,16 @@ function App() {
         {/* 1. 음료 진열대 */}
         <div className="col-span-2 bg-black/30 rounded-lg p-6 grid grid-cols-3 grid-rows-2 gap-6">
           {drinks.map((drink) => {
-            const isCashAvailable = paymentMethod === "cash" && insertedMoney >= drink.price && drink.stock > 0;
-            const isCardAvailable = paymentMethod === "card" && drink.stock > 0;
+            const isCashAvailable = paymentMethod === "cash" && insertedMoney >= drink.price;
+            const isCardAvailable = paymentMethod === "card";
             const isAvailable = isCashAvailable || isCardAvailable;
 
             return (
               <button
                 key={drink.id}
-                onClick={() => handleSelectDrink(drink)}
+                onClick={() => selectDrink(drink)}
                 disabled={!isAvailable || isProcessing}
-                className={`bg-white/90 p-4 rounded-lg shadow-lg flex flex-col items-center justify-between transition-all duration-200 \
-                  ${isAvailable && !isProcessing ? "cursor-pointer hover:scale-105 hover:shadow-xl" : "opacity-50 cursor-not-allowed"}`}
+                className={`bg-white/90 p-4 rounded-lg shadow-lg flex flex-col items-center justify-between transition-all duration-200 ${isAvailable && !isProcessing ? "cursor-pointer hover:scale-105 hover:shadow-xl" : "opacity-50 cursor-not-allowed"}`}
               >
                 <div className="text-5xl mb-2">{drink.icon}</div>
                 <div className="font-bold text-lg">{drink.name}</div>
@@ -191,7 +188,7 @@ function App() {
               {cashTypes.map((cash) => (
                 <button
                   key={cash}
-                  onClick={() => handleInsertCash(cash)}
+                  onClick={() => insertCash(cash)}
                   disabled={paymentMethod !== "cash" || isProcessing || purchasedItems.length > 0}
                   className="cursor-pointer bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600 transition-colors disabled:bg-gray-500 disabled:cursor-not-allowed"
                 >
@@ -204,7 +201,7 @@ function App() {
           {/* 반환 버튼 */}
           <div>
             <button
-              onClick={handleReturnChange}
+              onClick={returnChange}
               disabled={paymentMethod !== "cash" || isProcessing}
               className="cursor-pointer w-full bg-red-500 text-white p-3 rounded-md hover:bg-red-600 transition-colors disabled:bg-gray-500 disabled:cursor-not-allowed"
             >
