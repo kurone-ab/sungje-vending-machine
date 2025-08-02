@@ -1,13 +1,13 @@
 import type { DebugSettings } from "../useDebug";
 import type { Drink, PaymentResult, PaymentStrategy } from "./PaymentStrategy";
 
-export interface DebugStrategy {
+export interface MachineOperationStrategy {
   processInsertCash(amount: number, onMessage: (msg: string) => void): boolean;
   processPayment(strategy: PaymentStrategy, drink: Drink, insertedMoney: number): Promise<PaymentResult>;
   processDispense(): boolean;
 }
 
-export class NormalDebugStrategy implements DebugStrategy {
+export class DefaultMachineOperationStrategy implements MachineOperationStrategy {
   processInsertCash(amount: number, onMessage: (msg: string) => void): boolean {
     onMessage(`${amount.toLocaleString()}원이 투입되었습니다.`);
     return true;
@@ -22,7 +22,7 @@ export class NormalDebugStrategy implements DebugStrategy {
   }
 }
 
-export class DebugModeStrategy implements DebugStrategy {
+export class DebugMachineOperationStrategy implements MachineOperationStrategy {
   private debugSettings: DebugSettings;
 
   constructor(debugSettings: DebugSettings) {

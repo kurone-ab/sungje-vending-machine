@@ -1,5 +1,5 @@
 import React, { createContext, type ReactNode, useContext, useEffect, useMemo, useState } from "react";
-import { DebugModeStrategy, NormalDebugStrategy } from "../strategies/DebugStrategy";
+import { DebugMachineOperationStrategy, DefaultMachineOperationStrategy } from "../strategies/MachineOperationStrategy";
 import type { Drink } from "../strategies/PaymentStrategy";
 import { CardPaymentStrategy, CashPaymentStrategy } from "../strategies/PaymentStrategy";
 import type { DebugSettings } from "../useDebug";
@@ -53,11 +53,11 @@ export const VendingMachineProvider: React.FC<VendingMachineProviderProps> = ({
 
   const cashStrategy = useMemo(() => new CashPaymentStrategy(), []);
   const cardStrategy = useMemo(() => new CardPaymentStrategy(), []);
-  const normalDebugStrategy = useMemo(() => new NormalDebugStrategy(), []);
-  const debugModeStrategy = useMemo(() => new DebugModeStrategy(debugSettings), [debugSettings]);
+  const defaultMachineOperationStrategy = useMemo(() => new DefaultMachineOperationStrategy(), []);
+  const debugModeStrategy = useMemo(() => new DebugMachineOperationStrategy(debugSettings), [debugSettings]);
 
   const currentPaymentStrategy = paymentMethod === "cash" ? cashStrategy : cardStrategy;
-  const currentDebugStrategy = isDebugMode ? debugModeStrategy : normalDebugStrategy;
+  const machineOperationStrategy = isDebugMode ? debugModeStrategy : defaultMachineOperationStrategy;
 
   const showTemporaryMessage = (msg: string, duration = 2000) => {
     const defaultMessage =
@@ -99,7 +99,7 @@ export const VendingMachineProvider: React.FC<VendingMachineProviderProps> = ({
   const insertCash = (amount: number) => {
     if (paymentMethod !== "cash" || purchasedItems.length > 0) return;
 
-    const success = currentDebugStrategy.processInsertCash(amount, showTemporaryMessage);
+    const success = machineOperationStrategy.processInsertCash(amount, showTemporaryMessage);
     if (success) {
       setInsertedMoney((prev) => prev + amount);
     }
@@ -115,10 +115,10 @@ export const VendingMachineProvider: React.FC<VendingMachineProviderProps> = ({
     }
 
     try {
-      const paymentResult = await currentDebugStrategy.processPayment(currentPaymentStrategy, drink, insertedMoney);
+      const paymentResult = await machineOperationStrategy.processPayment(currentPaymentStrategy, drink, insertedMoney);
 
       if (paymentResult.success) {
-        const canDispense = currentDebugStrategy.processDispense();
+        const canDispense = machineOperationStrategy.processDispense();
 
         if (canDispense) {
           if (paymentMethod === "cash" && paymentResult.refundAmount !== undefined) {
