@@ -1,5 +1,5 @@
 import type { ChangeEvent, Dispatch, SetStateAction } from "react";
-import type { DebugSettings } from "../types";
+import type { DebugSettings } from "../types/debug";
 
 interface SwitchProps {
   name: string;

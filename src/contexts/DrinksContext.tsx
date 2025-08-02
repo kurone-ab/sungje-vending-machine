@@ -1,5 +1,5 @@
 import {createContext, type ReactNode, useContext, useState} from "react";
-import type {Drink} from "../types";
+import type { Drink } from "../types/drink";
 
 const initialDrinks: Drink[] = [
   { id: 1, name: "콜라", price: 1100, stock: 5, icon: "🥤" },

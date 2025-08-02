@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import type { DebugSettings } from "../types";
+import type { DebugSettings } from "../types/debug";
 
 export type { DebugSettings };
 

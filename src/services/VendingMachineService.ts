@@ -1,4 +1,6 @@
-import type { Drink, MachineOperationStrategy, PaymentStrategy, PaymentMethod } from "../types";
+import type { Drink } from "../types/drink";
+import type { PaymentMethod, PaymentStrategy } from "../types/payment";
+import type { MachineOperationStrategy } from "../types/machine";
 
 interface VendingMachineServiceCallbacks {
   onShowMessage: (msg: string) => void;

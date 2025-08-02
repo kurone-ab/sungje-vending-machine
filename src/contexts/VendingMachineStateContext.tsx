@@ -6,7 +6,8 @@ import { VendingMachineService } from "../services/VendingMachineService";
 import { useMessage } from "./MessageContext";
 import { usePayment } from "./PaymentContext";
 import { useDrinks } from "./DrinksContext";
-import type { Drink, DebugSettings } from "../types";
+import type { Drink } from "../types/drink";
+import type { DebugSettings } from "../types/debug";
 
 interface VendingMachineStateProviderProps {
   children: ReactNode;

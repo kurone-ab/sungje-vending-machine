@@ -1,6 +1,6 @@
 import { createContext, useContext, useRef, useState } from "react";
 import type { ReactNode } from "react";
-import type { PaymentMethod } from "../types";
+import type { PaymentMethod } from "../types/payment";
 
 interface MessageProviderProps {
   children: ReactNode;

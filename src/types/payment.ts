@@ -11,3 +11,6 @@ export interface PaymentStrategy {
   processPayment(drink: Drink, insertedMoney: number): Promise<PaymentResult>;
   getDisplayName(): string;
 }
+
+// Common utility types
+export type PaymentMethod = "cash" | "card";

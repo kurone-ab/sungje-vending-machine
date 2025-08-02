@@ -1,4 +1,5 @@
-import type { Drink, PaymentResult, PaymentStrategy } from '../types';
+import type { Drink } from '../types/drink';
+import type { PaymentResult, PaymentStrategy } from '../types/payment';
 
 export type { Drink, PaymentResult, PaymentStrategy };
 
