@@ -1,7 +1,16 @@
 import { useCallback, useEffect, useState } from "react";
 
-// --- 데이터 정의 ---
-const initialDrinks = [
+interface Drink {
+  id: number;
+  name: string;
+  price: number;
+  stock: number;
+  icon: string;
+}
+
+type PaymentMethod = "cash" | "card";
+
+const initialDrinks: Drink[] = [
   { id: 1, name: "콜라", price: 1100, stock: 5, icon: "🥤" },
   { id: 2, name: "물", price: 600, stock: 10, icon: "💧" },
   { id: 3, name: "커피", price: 700, stock: 8, icon: "☕️" },
@@ -9,29 +18,26 @@ const initialDrinks = [
 
 const cashTypes = [100, 500, 1000, 5000, 10000];
 
-// --- 타입 정의 ---
-type Drink = (typeof initialDrinks)[0];
-type PaymentMode = "cash" | "card";
 
 function App() {
   const [drinks, setDrinks] = useState(initialDrinks);
   const [insertedMoney, setInsertedMoney] = useState(0);
   const [purchasedItems, setPurchasedItems] = useState<Drink[]>([]);
   const [message, setMessage] = useState("결제 방식을 선택해주세요.");
-  const [paymentMode, setPaymentMode] = useState<PaymentMode>("cash");
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("cash");
   const [isProcessing, setIsProcessing] = useState(false);
 
   // 메시지를 잠시 보여주고 초기화하는 함수
   const showTemporaryMessage = useCallback(
     (msg: string, duration = 2000) => {
       const defaultMessage =
-        paymentMode === "cash" ? "현금을 투입하거나 음료를 선택하세요." : "결제할 음료를 선택하세요.";
+        paymentMethod === "cash" ? "현금을 투입하거나 음료를 선택하세요." : "결제할 음료를 선택하세요.";
       setMessage(msg);
       setTimeout(() => {
         setMessage(defaultMessage);
       }, duration);
     },
-    [paymentMode],
+    [paymentMethod],
   );
 
   // 자동 잔돈 반환 로직
@@ -45,11 +51,11 @@ function App() {
         setInsertedMoney(0);
       }
     }
-  }, [insertedMoney, purchasedItems, drinks, showTemporaryMessage]);
+  }, [purchasedItems, drinks, showTemporaryMessage]);
 
   // 현금 투입 핸들러
   const handleInsertCash = (amount: number) => {
-    if (paymentMode !== "cash" || purchasedItems.length > 0) return;
+    if (paymentMethod !== "cash" || purchasedItems.length > 0) return;
     setInsertedMoney((prev) => prev + amount);
     showTemporaryMessage(`${amount.toLocaleString()}원이 투입되었습니다.`);
   };
@@ -63,7 +69,7 @@ function App() {
       return;
     }
 
-    if (paymentMode === "cash") {
+    if (paymentMethod === "cash") {
       if (insertedMoney < drink.price) {
         showTemporaryMessage("잔액이 부족합니다.");
         return;
@@ -112,8 +118,8 @@ function App() {
 
   // 결제 모드 변경
   const togglePaymentMode = () => {
-    setPaymentMode((prev) => (prev === "cash" ? "card" : "cash"));
-    setMessage(paymentMode === "card" ? "현금 결제로 전환되었습니다." : "카드 결제로 전환되었습니다.");
+    setPaymentMethod((prev) => (prev === "cash" ? "card" : "cash"));
+    setMessage(paymentMethod === "card" ? "현금 결제로 전환되었습니다." : "카드 결제로 전환되었습니다.");
   };
 
   // 자판기 초기화 함수
@@ -121,7 +127,7 @@ function App() {
     setDrinks(initialDrinks);
     setInsertedMoney(0);
     setPurchasedItems([]);
-    setPaymentMode("cash");
+    setPaymentMethod("cash");
     setIsProcessing(false);
     setMessage("결제 방식을 선택해주세요.");
     showTemporaryMessage("자판기가 초기화되었습니다.");
@@ -133,8 +139,8 @@ function App() {
         {/* 1. 음료 진열대 */}
         <div className="col-span-2 bg-black/30 rounded-lg p-6 grid grid-cols-3 grid-rows-2 gap-6">
           {drinks.map((drink) => {
-            const isCashAvailable = paymentMode === "cash" && insertedMoney >= drink.price && drink.stock > 0;
-            const isCardAvailable = paymentMode === "card" && drink.stock > 0;
+            const isCashAvailable = paymentMethod === "cash" && insertedMoney >= drink.price && drink.stock > 0;
+            const isCardAvailable = paymentMethod === "card" && drink.stock > 0;
             const isAvailable = isCashAvailable || isCardAvailable;
 
             return (
@@ -162,7 +168,7 @@ function App() {
         <div className="flex flex-col gap-6">
           {/* 상태 표시창 */}
           <div className="bg-black text-white p-4 rounded-md text-right shadow-inner-lg">
-            <div className="text-sm text-green-400">{paymentMode === "card" ? "💳 카드결제" : "💵 현금결제"}</div>
+            <div className="text-sm text-green-400">{paymentMethod === "card" ? "💳 카드결제" : "💵 현금결제"}</div>
             <div className="text-3xl font-mono my-1">₩{insertedMoney.toLocaleString()}</div>
             <div className="text-sm mt-1 h-10 text-yellow-300 break-keep">{message}</div>
           </div>
@@ -173,12 +179,12 @@ function App() {
             disabled={insertedMoney > 0} // 현금 투입 시 비활성화
             className="cursor-pointer w-full bg-purple-500 text-white p-2 rounded-md hover:bg-purple-600 transition-colors disabled:bg-gray-500 disabled:cursor-not-allowed"
           >
-            {paymentMode === "cash" ? "💳 카드 결제로 전환" : "💵 현금 결제로 전환"}
+            {paymentMethod === "cash" ? "💳 카드 결제로 전환" : "💵 현금 결제로 전환"}
           </button>
 
           {/* 현금 투입 */}
           <div>
-            <p className={`text-white text-sm mb-2 transition-opacity ${paymentMode !== "cash" && "opacity-50"}`}>
+            <p className={`text-white text-sm mb-2 transition-opacity ${paymentMethod !== "cash" && "opacity-50"}`}>
               현금 투입:
             </p>
             <div className="grid grid-cols-2 gap-2">
@@ -186,7 +192,7 @@ function App() {
                 <button
                   key={cash}
                   onClick={() => handleInsertCash(cash)}
-                  disabled={paymentMode !== "cash" || isProcessing || purchasedItems.length > 0}
+                  disabled={paymentMethod !== "cash" || isProcessing || purchasedItems.length > 0}
                   className="cursor-pointer bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600 transition-colors disabled:bg-gray-500 disabled:cursor-not-allowed"
                 >
                   {cash.toLocaleString()}원
@@ -199,7 +205,7 @@ function App() {
           <div>
             <button
               onClick={handleReturnChange}
-              disabled={paymentMode !== "cash" || isProcessing}
+              disabled={paymentMethod !== "cash" || isProcessing}
               className="cursor-pointer w-full bg-red-500 text-white p-3 rounded-md hover:bg-red-600 transition-colors disabled:bg-gray-500 disabled:cursor-not-allowed"
             >
               반환
