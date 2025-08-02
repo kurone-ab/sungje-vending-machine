@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState, useMemo, ReactNode } from "react";
+import React, { createContext, useContext, useEffect, useState, useMemo, type ReactNode } from "react";
 import type { Drink } from "../strategies/PaymentStrategy";
 import { CashPaymentStrategy, CardPaymentStrategy } from "../strategies/PaymentStrategy";
 import { NormalDebugStrategy, DebugModeStrategy } from "../strategies/DebugStrategy";
@@ -49,6 +49,7 @@ export const VendingMachineProvider: React.FC<VendingMachineProviderProps> = ({
   const [message, setMessage] = useState("결제 방식을 선택해주세요.");
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("cash");
   const [isProcessing, setIsProcessing] = useState(false);
+  const [messageTimeoutId, setMessageTimeoutId] = useState<number | null>(null);
 
   const cashStrategy = useMemo(() => new CashPaymentStrategy(), []);
   const cardStrategy = useMemo(() => new CardPaymentStrategy(), []);
@@ -61,12 +62,19 @@ export const VendingMachineProvider: React.FC<VendingMachineProviderProps> = ({
   const showTemporaryMessage = (msg: string, duration = 2000) => {
     const defaultMessage =
       paymentMethod === "cash" ? "현금을 투입하거나 음료를 선택하세요." : "결제할 음료를 선택하세요.";
+    
+    if (messageTimeoutId !== null) {
+      clearTimeout(messageTimeoutId);
+    }
+    
     setMessage(msg);
     return new Promise<boolean>((resolve) => {
-      setTimeout(() => {
+      const timeoutId = window.setTimeout(() => {
         setMessage(defaultMessage);
+        setMessageTimeoutId(null);
         resolve(true);
       }, duration);
+      setMessageTimeoutId(timeoutId);
     });
   };
 
