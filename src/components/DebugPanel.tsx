@@ -1,5 +1,5 @@
 import type { ChangeEvent, Dispatch, SetStateAction } from "react";
-import type { DebugSettings } from "./useDebug";
+import type { DebugSettings } from "../hooks/useDebug";
 
 interface DebugPanelProps {
   debugSettings: DebugSettings;

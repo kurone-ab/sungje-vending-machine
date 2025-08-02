@@ -1,8 +1,8 @@
 import { createContext, type ReactNode, useContext, useMemo, useRef, useState } from "react";
+import type { DebugSettings } from "../hooks/useDebug";
 import { DebugMachineOperationStrategy, DefaultMachineOperationStrategy } from "../strategies/MachineOperationStrategy";
 import type { Drink } from "../strategies/PaymentStrategy";
 import { CardPaymentStrategy, CashPaymentStrategy } from "../strategies/PaymentStrategy";
-import type { DebugSettings } from "../useDebug";
 
 type PaymentMethod = "cash" | "card";
 

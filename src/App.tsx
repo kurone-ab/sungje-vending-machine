@@ -1,6 +1,6 @@
-import { VendingMachine } from "./containers/VendingMachine";
-import DebugPanel from "./DebugPanel";
-import { useDebug } from "./useDebug";
+import DebugPanel from "./components/DebugPanel";
+import { VendingMachine } from "./components/VendingMachine";
+import { useDebug } from "./hooks/useDebug";
 
 function App() {
   const { isDebugMode, debugSettings, setDebugSettings } = useDebug();
