@@ -1,7 +1,7 @@
 import type { DebugSettings } from "../types/debug";
 import type { Drink } from "../types/drink";
-import type { PaymentResult, PaymentStrategy } from "../types/payment";
 import type { MachineOperationStrategy } from "../types/machine";
+import type { PaymentResult, PaymentStrategy } from "../types/payment";
 
 export type { MachineOperationStrategy };
 

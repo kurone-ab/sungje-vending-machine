@@ -1,5 +1,5 @@
-import type { Drink } from './drink';
-import type { PaymentResult, PaymentStrategy } from './payment';
+import type { Drink } from "./drink";
+import type { PaymentResult, PaymentStrategy } from "./payment";
 
 export interface MachineOperationStrategy {
   processInsertCash(amount: number, onMessage: (msg: string) => void): boolean;

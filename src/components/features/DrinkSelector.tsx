@@ -1,6 +1,6 @@
 import { useDrinks } from "../../contexts/DrinksContext";
 import { usePayment } from "../../contexts/PaymentContext";
-import { useVendingMachine } from "../../contexts/VendingMachineContext";
+import { useVendingMachine } from "../../contexts/VendingMachineStateContext";
 import { DrinkCard } from "../ui/DrinkCard";
 
 export function DrinkSelector() {

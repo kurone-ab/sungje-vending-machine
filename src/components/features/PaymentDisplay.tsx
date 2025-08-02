@@ -1,5 +1,5 @@
-import { usePayment } from "../../contexts/PaymentContext";
 import { useMessage } from "../../contexts/MessageContext";
+import { usePayment } from "../../contexts/PaymentContext";
 
 export function PaymentDisplay() {
   const { paymentMethod, insertedMoney } = usePayment();

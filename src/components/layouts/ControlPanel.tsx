@@ -1,7 +1,7 @@
 import { PaymentDisplay } from "../features/PaymentDisplay";
 import { PaymentModeToggle } from "../features/PaymentModeToggle";
-import { CashInputPanel } from "../ui/CashInputPanel";
 import { ActionButtons } from "../ui/ActionButtons";
+import { CashInputPanel } from "../ui/CashInputPanel";
 import { PaymentSummary } from "../ui/PaymentSummary";
 
 export function ControlPanel() {

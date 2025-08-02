@@ -1,4 +1,4 @@
-import {createContext, type ReactNode, useContext, useState} from "react";
+import { createContext, type ReactNode, useContext, useState } from "react";
 import type { Drink } from "../types/drink";
 
 const initialDrinks: Drink[] = [

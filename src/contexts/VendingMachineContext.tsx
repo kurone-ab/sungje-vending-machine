@@ -1,9 +1,9 @@
 import type { ReactNode } from "react";
+import type { DebugSettings } from "../types/debug";
+import { DrinksProvider } from "./DrinksContext";
 import { MessageProvider } from "./MessageContext";
 import { PaymentProvider } from "./PaymentContext";
-import { DrinksProvider } from "./DrinksContext";
 import { VendingMachineStateProvider } from "./VendingMachineStateContext";
-import type { DebugSettings } from "../types/debug";
 
 interface VendingMachineProviderProps {
   children: ReactNode;
@@ -26,5 +26,3 @@ export function VendingMachineProvider(props: VendingMachineProviderProps) {
     </MessageProvider>
   );
 }
-
-export { useVendingMachine } from "./VendingMachineStateContext";

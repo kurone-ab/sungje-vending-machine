@@ -1,5 +1,5 @@
 import { usePayment } from "../../contexts/PaymentContext";
-import { useVendingMachine } from "../../contexts/VendingMachineContext";
+import { useVendingMachine } from "../../contexts/VendingMachineStateContext";
 
 const cashTypes = [100, 500, 1000, 5000, 10000];
 

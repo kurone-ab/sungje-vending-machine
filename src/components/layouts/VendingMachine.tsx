@@ -1,8 +1,8 @@
 import { VendingMachineProvider } from "../../contexts/VendingMachineContext";
-import { ControlPanel } from "./ControlPanel";
+import type { DebugSettings } from "../../types/debug";
 import { DrinkSelector } from "../features/DrinkSelector";
 import { ReturnTray } from "../features/ReturnTray";
-import type { DebugSettings } from "../../types/debug";
+import { ControlPanel } from "./ControlPanel";
 
 interface VendingMachineProps {
   isDebugMode: boolean;

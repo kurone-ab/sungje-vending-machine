@@ -1,4 +1,4 @@
-import type { Drink } from './drink';
+import type { Drink } from "./drink";
 
 export interface PaymentResult {
   success: boolean;

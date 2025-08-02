@@ -23,7 +23,6 @@ function Switch({ name, checked, onChange, label }: SwitchProps) {
   );
 }
 
-
 function DebugPanel({ debugSettings, setDebugSettings }: DebugPanelProps) {
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, checked } = e.target;

@@ -1,13 +1,13 @@
-import { createContext, useContext, useMemo, useState } from "react";
 import type { ReactNode } from "react";
+import { createContext, useContext, useMemo, useState } from "react";
+import { VendingMachineService } from "../services/VendingMachineService";
 import { DebugMachineOperationStrategy, DefaultMachineOperationStrategy } from "../strategies/MachineOperationStrategy";
 import { CardPaymentStrategy, CashPaymentStrategy } from "../strategies/PaymentStrategy";
-import { VendingMachineService } from "../services/VendingMachineService";
+import type { DebugSettings } from "../types/debug";
+import type { Drink } from "../types/drink";
+import { useDrinks } from "./DrinksContext";
 import { useMessage } from "./MessageContext";
 import { usePayment } from "./PaymentContext";
-import { useDrinks } from "./DrinksContext";
-import type { Drink } from "../types/drink";
-import type { DebugSettings } from "../types/debug";
 
 interface VendingMachineStateProviderProps {
   children: ReactNode;
