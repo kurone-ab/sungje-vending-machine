@@ -19,13 +19,16 @@ interface VendingMachineState {
   message: string;
   paymentMethod: PaymentMethod;
   isProcessing: boolean;
+  refundedAmount: number;
 }
 
 interface VendingMachineActions {
   insertCash: (amount: number) => void;
   selectDrink: (drink: Drink) => Promise<void>;
   togglePaymentMode: () => void;
-  reset: () => void;
+  clearRefundedAmount: () => void;
+  resetToInitialState: () => void;
+  refundAllCash: () => void;
 }
 
 interface VendingMachineContextType extends VendingMachineState, VendingMachineActions {}
@@ -49,6 +52,7 @@ export const VendingMachineProvider: React.FC<VendingMachineProviderProps> = ({
   const [message, setMessage] = useState("결제 방식을 선택해주세요.");
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("cash");
   const [isProcessing, setIsProcessing] = useState(false);
+  const [refundedAmount, setRefundedAmount] = useState(0);
   const [messageTimeoutId, setMessageTimeoutId] = useState<number | null>(null);
 
   const cashStrategy = useMemo(() => new CashPaymentStrategy(), []);
@@ -83,18 +87,12 @@ export const VendingMachineProvider: React.FC<VendingMachineProviderProps> = ({
       const canBuyMore = drinks.some((drink) => drink.stock > 0 && insertedMoney >= drink.price);
       if (!canBuyMore) {
         showTemporaryMessage(`구매 가능한 상품이 없어 ${insertedMoney.toLocaleString()}원을 반환합니다.`, 4000);
+        setRefundedAmount((prev) => prev + insertedMoney);
         setInsertedMoney(0);
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [purchasedItems.length, drinks, insertedMoney]);
-
-  useEffect(() => {
-    if (purchasedItems.length > 0 && insertedMoney === 0) {
-      showTemporaryMessage("이용해주셔서 감사합니다.").then(reset);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [purchasedItems.length, insertedMoney]);
 
   const insertCash = (amount: number) => {
     if (paymentMethod !== "cash" || purchasedItems.length > 0) return;
@@ -130,6 +128,7 @@ export const VendingMachineProvider: React.FC<VendingMachineProviderProps> = ({
           showTemporaryMessage("상품 제공에 실패했습니다. 결제를 취소합니다.");
           if (paymentMethod === "cash") {
             showTemporaryMessage(`오류 발생! ${drink.price.toLocaleString()}원을 환불합니다.`);
+            setRefundedAmount((prev) => prev + drink.price);
             setInsertedMoney((prev) => prev + drink.price);
           }
         }
@@ -153,15 +152,30 @@ export const VendingMachineProvider: React.FC<VendingMachineProviderProps> = ({
     showTemporaryMessage(paymentMethod === "card" ? "현금 결제로 전환되었습니다." : "카드 결제로 전환되었습니다.");
   };
 
-  const reset = () => {
-    if (paymentMethod === "cash" && insertedMoney > 0) {
-      showTemporaryMessage(`${insertedMoney.toLocaleString()}원이 반환됩니다.`);
-    }
+  const clearRefundedAmount = () => {
+    setRefundedAmount(0);
+  };
+
+  const resetToInitialState = () => {
     setDrinks(initialDrinks);
     setInsertedMoney(0);
     setPurchasedItems([]);
+    setMessage("결제 방식을 선택해주세요.");
     setPaymentMethod("cash");
     setIsProcessing(false);
+    setRefundedAmount(0);
+    if (messageTimeoutId !== null) {
+      clearTimeout(messageTimeoutId);
+      setMessageTimeoutId(null);
+    }
+  };
+
+  const refundAllCash = () => {
+    if (paymentMethod === "cash" && insertedMoney > 0) {
+      showTemporaryMessage(`${insertedMoney.toLocaleString()}원이 반환됩니다.`);
+      setRefundedAmount((prev) => prev + insertedMoney);
+      setInsertedMoney(0);
+    }
   };
 
   const value: VendingMachineContextType = {
@@ -171,10 +185,13 @@ export const VendingMachineProvider: React.FC<VendingMachineProviderProps> = ({
     message,
     paymentMethod,
     isProcessing,
+    refundedAmount,
     insertCash,
     selectDrink,
     togglePaymentMode,
-    reset,
+    clearRefundedAmount,
+    resetToInitialState,
+    refundAllCash,
   };
 
   return <VendingMachineContext.Provider value={value}>{children}</VendingMachineContext.Provider>;
