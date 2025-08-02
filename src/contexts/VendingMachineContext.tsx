@@ -135,7 +135,8 @@ export const VendingMachineProvider: React.FC<VendingMachineProviderProps> = ({
       } else {
         showTemporaryMessage(paymentResult.message);
       }
-    } catch {
+    } catch (e) {
+      console.error(e);
       showTemporaryMessage("처리 중 오류가 발생했습니다.");
     } finally {
       setIsProcessing(false);
