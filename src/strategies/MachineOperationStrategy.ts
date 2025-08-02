@@ -31,7 +31,7 @@ export class DebugMachineOperationStrategy implements MachineOperationStrategy {
 
   processInsertCash(amount: number, onMessage: (msg: string) => void): boolean {
     if (this.debugSettings.forceInvalidCash) {
-      onMessage(`[Debug] 유효하지 않은 화폐(${amount.toLocaleString()}원)가 반환됩니다.`);
+      onMessage(`유효하지 않은 화폐(${amount.toLocaleString()}원)가 반환됩니다.`);
       return false;
     }
 

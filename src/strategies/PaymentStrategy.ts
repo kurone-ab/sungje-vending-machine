@@ -9,7 +9,7 @@ export interface Drink {
 export interface PaymentResult {
   success: boolean;
   message: string;
-  refundAmount?: number;
+  changeAmount?: number;
 }
 
 export interface PaymentStrategy {
@@ -34,7 +34,7 @@ export class CashPaymentStrategy implements PaymentStrategy {
     return {
       success: true,
       message: `${drink.name}이(가) 나왔습니다.`,
-      refundAmount: insertedMoney - drink.price,
+      changeAmount: insertedMoney - drink.price,
     };
   }
 

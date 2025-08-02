@@ -1,4 +1,4 @@
-import React, { createContext, type ReactNode, useContext, useEffect, useMemo, useState } from "react";
+import React, { createContext, type ReactNode, useContext, useMemo, useState } from "react";
 import { DebugMachineOperationStrategy, DefaultMachineOperationStrategy } from "../strategies/MachineOperationStrategy";
 import type { Drink } from "../strategies/PaymentStrategy";
 import { CardPaymentStrategy, CashPaymentStrategy } from "../strategies/PaymentStrategy";
@@ -82,8 +82,8 @@ export const VendingMachineProvider: React.FC<VendingMachineProviderProps> = ({
     });
   };
 
-  useEffect(() => {
-    if (insertedMoney > 0 && purchasedItems.length > 0) {
+  const changeIfCannotBuyMore = (insertedMoney: number) => {
+    if (insertedMoney > 0) {
       const canBuyMore = drinks.some((drink) => drink.stock > 0 && insertedMoney >= drink.price);
       if (!canBuyMore) {
         showTemporaryMessage(`구매 가능한 상품이 없어 ${insertedMoney.toLocaleString()}원을 반환합니다.`, 4000);
@@ -91,15 +91,16 @@ export const VendingMachineProvider: React.FC<VendingMachineProviderProps> = ({
         setInsertedMoney(0);
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [purchasedItems.length, drinks, insertedMoney]);
+  };
 
   const insertCash = (amount: number) => {
-    if (paymentMethod !== "cash" || purchasedItems.length > 0) return;
+    if (paymentMethod !== "cash") return;
 
     const success = machineOperationStrategy.processInsertCash(amount, showTemporaryMessage);
     if (success) {
       setInsertedMoney((prev) => prev + amount);
+    } else {
+      setRefundedAmount((prev) => prev + amount);
     }
   };
 
@@ -119,8 +120,9 @@ export const VendingMachineProvider: React.FC<VendingMachineProviderProps> = ({
         const canDispense = machineOperationStrategy.processDispense();
 
         if (canDispense) {
-          if (paymentMethod === "cash" && paymentResult.refundAmount !== undefined) {
-            setInsertedMoney(paymentResult.refundAmount);
+          if (paymentMethod === "cash" && paymentResult.changeAmount !== undefined) {
+            setInsertedMoney(paymentResult.changeAmount);
+            changeIfCannotBuyMore(paymentResult.changeAmount);
           }
           dispenseDrink(drink);
           showTemporaryMessage(paymentResult.message);
@@ -129,7 +131,6 @@ export const VendingMachineProvider: React.FC<VendingMachineProviderProps> = ({
           if (paymentMethod === "cash") {
             showTemporaryMessage(`오류 발생! ${drink.price.toLocaleString()}원을 환불합니다.`);
             setRefundedAmount((prev) => prev + drink.price);
-            setInsertedMoney((prev) => prev + drink.price);
           }
         }
       } else {
