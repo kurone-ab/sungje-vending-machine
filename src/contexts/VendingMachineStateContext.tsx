@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import { createContext, useContext, useMemo, useState } from "react";
 import { VendingMachineService } from "../services/VendingMachineService";
 import { DebugMachineOperationStrategy, DefaultMachineOperationStrategy } from "../strategies/MachineOperationStrategy";
-import { CardPaymentStrategy, CashPaymentStrategy } from "../strategies/PaymentStrategy";
+import { CardPaymentStrategy, CashPaymentStrategy, DebugCardPaymentStrategy } from "../strategies/PaymentStrategy";
 import type { DebugSettings } from "../types/debug";
 import type { Drink } from "../types/drink";
 import { useDrinks } from "./DrinksContext";
@@ -42,10 +42,11 @@ export function VendingMachineStateProvider(props: VendingMachineStateProviderPr
 
   const cashStrategy = useMemo(() => new CashPaymentStrategy(), []);
   const cardStrategy = useMemo(() => new CardPaymentStrategy(), []);
+  const debugCardStrategy = useMemo(() => new DebugCardPaymentStrategy(debugSettings), [debugSettings]);
   const defaultMachineOperationStrategy = useMemo(() => new DefaultMachineOperationStrategy(), []);
   const debugModeStrategy = useMemo(() => new DebugMachineOperationStrategy(debugSettings), [debugSettings]);
 
-  const currentPaymentStrategy = paymentMethod === "cash" ? cashStrategy : cardStrategy;
+  const paymentStrategy = paymentMethod === "cash" ? cashStrategy : isDebugMode ? debugCardStrategy : cardStrategy;
   const machineOperationStrategy = isDebugMode ? debugModeStrategy : defaultMachineOperationStrategy;
 
   const vendingMachineService = new VendingMachineService({
@@ -71,7 +72,7 @@ export function VendingMachineStateProvider(props: VendingMachineStateProviderPr
       insertedMoney,
       paymentMethod,
       drinks,
-      currentPaymentStrategy,
+      paymentStrategy,
       machineOperationStrategy,
     );
     setIsProcessing(false);

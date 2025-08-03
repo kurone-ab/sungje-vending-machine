@@ -1,5 +1,6 @@
 import type { Drink } from "../types/drink";
 import type { PaymentResult, PaymentStrategy } from "../types/payment";
+import type { DebugSettings } from "../types/debug";
 
 export class CashPaymentStrategy implements PaymentStrategy {
   canPurchase(drink: Drink, insertedMoney: number): boolean {
@@ -20,10 +21,6 @@ export class CashPaymentStrategy implements PaymentStrategy {
       changeAmount: insertedMoney - drink.price,
     };
   }
-
-  getDisplayName(): string {
-    return "💵 현금결제";
-  }
 }
 
 export class CardPaymentStrategy implements PaymentStrategy {
@@ -31,8 +28,7 @@ export class CardPaymentStrategy implements PaymentStrategy {
     return drink.stock > 0;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async processPayment(drink: Drink, _insertedMoney: number): Promise<PaymentResult> {
+  async processPayment(drink: Drink): Promise<PaymentResult> {
     if (!this.canPurchase(drink)) {
       return {
         success: false,
@@ -47,7 +43,38 @@ export class CardPaymentStrategy implements PaymentStrategy {
       message: `${drink.name}이(가) 나왔습니다.`,
     };
   }
-  getDisplayName(): string {
-    return "💳 카드결제";
+}
+
+export class DebugCardPaymentStrategy extends CardPaymentStrategy {
+  private debugSettings: DebugSettings;
+
+  constructor(debugSettings: DebugSettings) {
+    super();
+    this.debugSettings = debugSettings;
+  }
+
+  async processPayment(drink: Drink): Promise<PaymentResult> {
+    if (!this.canPurchase(drink)) {
+      return {
+        success: false,
+        message: "재고가 없습니다.",
+      };
+    }
+
+    // 카드 결제 시뮬레이션
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+
+    // 디버그 모드에서 카드 결제 실패 시뮬레이션
+    if (this.debugSettings.forceCardFailure) {
+      return {
+        success: false,
+        message: "카드 결제에 실패했습니다.",
+      };
+    }
+
+    return {
+      success: true,
+      message: `${drink.name}이(가) 나왔습니다.`,
+    };
   }
 }

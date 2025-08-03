@@ -43,16 +43,7 @@ export class DebugMachineOperationStrategy implements MachineOperationStrategy {
       };
     }
 
-    const result = await strategy.processPayment(drink, insertedMoney);
-
-    if (result.success && strategy.getDisplayName().includes("카드") && this.debugSettings.forceCardFailure) {
-      return {
-        success: false,
-        message: "카드 결제에 실패했습니다.",
-      };
-    }
-
-    return result;
+    return strategy.processPayment(drink, insertedMoney);
   }
 
   processDispense(): boolean {

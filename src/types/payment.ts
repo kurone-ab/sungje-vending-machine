@@ -8,8 +8,7 @@ export interface PaymentResult {
 
 export interface PaymentStrategy {
   canPurchase(drink: Drink, insertedMoney?: number): boolean;
-  processPayment(drink: Drink, insertedMoney: number): Promise<PaymentResult>;
-  getDisplayName(): string;
+  processPayment(drink: Drink, insertedMoney?: number): Promise<PaymentResult>;
 }
 
 // Common utility types
