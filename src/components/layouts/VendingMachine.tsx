@@ -1,7 +1,7 @@
 import { VendingMachineProvider } from "../../contexts/VendingMachineContext";
 import type { DebugSettings } from "../../types/debug";
 import { DrinkSelector } from "../features/DrinkSelector";
-import { ReturnTray } from "../features/ReturnTray";
+import { ReturnTray } from "../ui/ReturnTray";
 import { ControlPanel } from "./ControlPanel";
 
 interface VendingMachineProps {
