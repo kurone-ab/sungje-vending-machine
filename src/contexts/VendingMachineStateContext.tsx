@@ -48,27 +48,15 @@ export function VendingMachineStateProvider(props: VendingMachineStateProviderPr
   const currentPaymentStrategy = paymentMethod === "cash" ? cashStrategy : cardStrategy;
   const machineOperationStrategy = isDebugMode ? debugModeStrategy : defaultMachineOperationStrategy;
 
-  const vendingMachineService = useMemo(
-    () =>
-      new VendingMachineService({
-        onShowMessage: showMessage,
-        onShowTemporaryMessage: showTemporaryMessage,
-        onSetDefaultMessage: setDefaultMessage,
-        onUpdateInsertedMoney: updateInsertedMoney,
-        onAddRefundedAmount: addRefundedAmount,
-        onDispenseDrink: dispenseDrink,
-        onUpdateDrinkStock: updateDrinkStock,
-      }),
-    [
-      showMessage,
-      showTemporaryMessage,
-      setDefaultMessage,
-      updateInsertedMoney,
-      addRefundedAmount,
-      dispenseDrink,
-      updateDrinkStock,
-    ],
-  );
+  const vendingMachineService = new VendingMachineService({
+    onShowMessage: showMessage,
+    onShowTemporaryMessage: showTemporaryMessage,
+    onSetDefaultMessage: setDefaultMessage,
+    onUpdateInsertedMoney: updateInsertedMoney,
+    onAddRefundedAmount: addRefundedAmount,
+    onDispenseDrink: dispenseDrink,
+    onUpdateDrinkStock: updateDrinkStock,
+  });
 
   const insertCash = (amount: number) => {
     vendingMachineService.insertCash(amount, paymentMethod, machineOperationStrategy);
