@@ -7,6 +7,7 @@ interface VendingMachineServiceCallbacks {
   onShowTemporaryMessage: (msg: string, duration?: number) => Promise<boolean>;
   onSetDefaultMessage: (paymentMethod: PaymentMethod) => void;
   onUpdateInsertedMoney: (amount: number) => void;
+  onAddInsertedMoney: (amount: number) => void;
   onAddRefundedAmount: (amount: number) => void;
   onDispenseDrink: (drink: Drink) => void;
   onUpdateDrinkStock: (drinkId: number) => void;
@@ -38,7 +39,7 @@ export class VendingMachineService {
 
     const success = machineOperationStrategy.processInsertCash(amount, this.callbacks.onShowTemporaryMessage);
     if (success) {
-      this.callbacks.onUpdateInsertedMoney(amount);
+      this.callbacks.onAddInsertedMoney(amount);
     } else {
       this.callbacks.onAddRefundedAmount(amount);
     }

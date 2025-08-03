@@ -36,7 +36,7 @@ export function VendingMachineStateProvider(props: VendingMachineStateProviderPr
   const [isProcessing, setIsProcessing] = useState(false);
 
   const { showMessage, showTemporaryMessage, setDefaultMessage } = useMessage();
-  const { paymentMethod, insertedMoney, setPaymentMethod, updateInsertedMoney, addRefundedAmount, resetPayment } =
+  const { paymentMethod, insertedMoney, setPaymentMethod, updateInsertedMoney, addInsertedMoney, addRefundedAmount, resetPayment } =
     usePayment();
   const { drinks, updateDrinkStock, dispenseDrink, resetDrinks } = useDrinks();
 
@@ -49,15 +49,29 @@ export function VendingMachineStateProvider(props: VendingMachineStateProviderPr
   const paymentStrategy = paymentMethod === "cash" ? cashStrategy : isDebugMode ? debugCardStrategy : cardStrategy;
   const machineOperationStrategy = isDebugMode ? debugModeStrategy : defaultMachineOperationStrategy;
 
-  const vendingMachineService = new VendingMachineService({
-    onShowMessage: showMessage,
-    onShowTemporaryMessage: showTemporaryMessage,
-    onSetDefaultMessage: setDefaultMessage,
-    onUpdateInsertedMoney: updateInsertedMoney,
-    onAddRefundedAmount: addRefundedAmount,
-    onDispenseDrink: dispenseDrink,
-    onUpdateDrinkStock: updateDrinkStock,
-  });
+  const vendingMachineService = useMemo(
+    () =>
+      new VendingMachineService({
+        onShowMessage: showMessage,
+        onShowTemporaryMessage: showTemporaryMessage,
+        onSetDefaultMessage: setDefaultMessage,
+        onUpdateInsertedMoney: updateInsertedMoney,
+        onAddInsertedMoney: addInsertedMoney,
+        onAddRefundedAmount: addRefundedAmount,
+        onDispenseDrink: dispenseDrink,
+        onUpdateDrinkStock: updateDrinkStock,
+      }),
+    [
+      showMessage,
+      showTemporaryMessage,
+      setDefaultMessage,
+      updateInsertedMoney,
+      addInsertedMoney,
+      addRefundedAmount,
+      dispenseDrink,
+      updateDrinkStock,
+    ],
+  );
 
   const insertCash = (amount: number) => {
     vendingMachineService.insertCash(amount, paymentMethod, machineOperationStrategy);

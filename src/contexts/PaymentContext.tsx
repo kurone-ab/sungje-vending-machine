@@ -15,6 +15,7 @@ interface PaymentState {
 interface PaymentActions {
   setPaymentMethod: (method: PaymentMethod) => void;
   updateInsertedMoney: (amount: number) => void;
+  addInsertedMoney: (amount: number) => void;
   addRefundedAmount: (amount: number) => void;
   clearRefundedAmount: () => void;
   resetPayment: () => void;
@@ -30,11 +31,11 @@ export function PaymentProvider({ children }: PaymentProviderProps) {
   const [refundedAmount, setRefundedAmount] = useState(0);
 
   const updateInsertedMoney = (amount: number) => {
-    if (amount === 0) {
-      setInsertedMoney(0);
-    } else {
-      setInsertedMoney((prev) => prev + amount);
-    }
+    setInsertedMoney(amount);
+  };
+
+  const addInsertedMoney = (amount: number) => {
+    setInsertedMoney((prev) => prev + amount);
   };
 
   const addRefundedAmount = (amount: number) => {
@@ -57,6 +58,7 @@ export function PaymentProvider({ children }: PaymentProviderProps) {
     refundedAmount,
     setPaymentMethod,
     updateInsertedMoney,
+    addInsertedMoney,
     addRefundedAmount,
     clearRefundedAmount,
     resetPayment,
