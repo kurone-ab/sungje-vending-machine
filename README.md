@@ -122,7 +122,7 @@ pnpm run dev
 - 변경사항은 실시간으로 반영됩니다 (Hot Module Replacement)
 - 디버그 모드는 코나미 코드로 활성화할 수 있습니다
 
-## 🏗 아키텍처
+## 아키텍처
 
 ### Strategy Pattern (전략 패턴)
 
